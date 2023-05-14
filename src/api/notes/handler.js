@@ -1,151 +1,47 @@
-const { nanoid } = require("nanoid");
-const notes = require("./notes");
-
-const addNoteHandler = (request, h) => {
-  const { title, tags, body } = request.payload;
-
-  const id = nanoid(16);
-  const createdAt = new Date().toISOString();
-  const updatedAt = createdAt;
-
-  const newNote = {
-    title,
-    tags,
-    body,
-    id,
-    createdAt,
-    updatedAt,
-  };
-
-  notes.push(newNote);
-
-  const isSuccess = notes.filter((note) => note.id === id).length > 0;
-
-  if (isSuccess) {
-    const response = h.response({
-      status: "success",
-      message: "Catatan berhasil ditambahkan",
-      data: {
-        noteId: id,
-      },
-    });
-    response.code(201);
-    return response;
+class NotesHandler {
+  constructor(service) {
+    this._service = sevice;
   }
 
-  const response = h.response({
-    status: "fail",
-    message: "Catatan gagal ditambahkan",
-  });
-  response.code(500);
-  return response;
-};
+  // method postNoteHandler
+  postNoteHandler() {
+    try {
+      const { title = "untitled", body, tags } = request.payload;
 
-const getAllNotesHandler = (request, h) => ({
-  status: "success",
-  data: {
-    notes,
-  },
-});
+      const noteId = this._service.addNote({ title, body, tags });
 
-const getNoteByIdHandler = (request, h) => {
-  // tangkap id dari params
-  const { id } = request.params;
+      const response = h.response({
+        status: "success",
+        message: "Catatan berhasil ditambahkan",
+        data: {
+          noteId,
+        },
+      });
+      response.code(201);
+      return response;
+    } catch (error) {
+      const response = h.response({
+        status: "fail",
+        message: error.message,
+      });
+      response.code(400);
+      return response;
+    }
+  }
 
-  // filter notesnya sesuai id
-  const note = notes.filter((e) => e.id === id)[0];
-
-  // kalo respon success
-  if (note !== undefined) {
+  getNotesHandler() {
+    const notes = this.service.getNotes();
     return {
       status: "success",
       data: {
-        note,
+        notes,
       },
     };
   }
 
-  // kalo respon gagal
-  const response = h.response({
-    status: "fail",
-    message: "Catatan tidak ditemukan",
-  });
-  response.code(404);
-  return response;
-};
+  getNoteByIdHandler() {}
 
-const editNoteByIdHandler = (request, h) => {
-  // ambil id dari params
-  const { id } = request.params;
+  putNoteByIdHandler() {}
 
-  // ambil data dari body
-  const { title, tags, body } = request.payload;
-  // buat tanggal update/ waktu sekarang
-  const updatedAt = new Date().toISOString();
-
-  // PROSESS UPDATE
-  // ambil index-nya dulu
-  const index = notes.findIndex((note) => note.id === id);
-
-  // kalo index ada
-  if (index !== -1) {
-    // diganti / ditimpa datanya
-    notes[index] = { ...notes[index], title, tags, body, updatedAt };
-
-    // berikan respon
-    const response = h.response({
-      status: "success",
-      message: "Catatan berhasil diperbarui",
-      data: {
-        note: notes[index],
-      },
-    });
-    response.code(200);
-    return response;
-  }
-
-  // kalo index ga ada
-  const response = h.response({
-    status: "fail",
-    message: "Gagal memperbarui catatan. Id tidak ditemukan",
-  });
-  response.code(404);
-  return response;
-};
-
-const deleteNoteByIdHandler = (request, h) => {
-  const { id } = request.params;
-
-  // cari index
-  const index = notes.findIndex((e) => e.id === id);
-
-  // kalo index ada
-  if (index !== -1) {
-    // penghapusan data dalam array sesuai index
-    notes.splice(index, 1);
-
-    // berikan response
-    const response = h.response({
-      status: "success",
-      message: "Catatan berhasil dihapus",
-    });
-    response.code(200);
-    return response;
-  }
-
-  // kalo index ga ada
-  const response = h.response({
-    status: "fail",
-    message: "Catatan tidak ditemukan",
-  });
-  response.code(404);
-  return response;
-};
-
-module.exports = {
-  addNoteHandler,
-  getAllNotesHandler,
-  getNoteByIdHandler,
-  editNoteByIdHandler,
-  deleteNoteByIdHandler,
-};
+  deleteNoteByIdHandler() {}
+}
