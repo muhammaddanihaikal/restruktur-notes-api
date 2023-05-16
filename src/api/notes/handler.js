@@ -4,12 +4,15 @@ class NotesHandler {
   }
 
   // method postNoteHandler
-  postNoteHandler() {
+  postNoteHandler(request, h) {
     try {
+      // inisialisasi
       const { title = "untitled", body, tags } = request.payload;
 
+      // ambil id dari service post
       const noteId = this._service.addNote({ title, body, tags });
 
+      // response success
       const response = h.response({
         status: "success",
         message: "Catatan berhasil ditambahkan",
@@ -20,6 +23,7 @@ class NotesHandler {
       response.code(201);
       return response;
     } catch (error) {
+      // response error
       const response = h.response({
         status: "fail",
         message: error.message,
@@ -39,9 +43,77 @@ class NotesHandler {
     };
   }
 
-  getNoteByIdHandler() {}
+  getNoteByIdHandler(request, h) {
+    try {
+      // ambil id dari request params
+      const { id } = request.params;
 
-  putNoteByIdHandler() {}
+      // ambil data sesuai id
+      const note = this._service.getNoteById(id);
 
-  deleteNoteByIdHandler() {}
+      // kembalikan response success
+      return {
+        status: "success",
+        data: {
+          note,
+        },
+      };
+    } catch (error) {
+      const response = h.response({
+        // response error
+        status: "fail",
+        message: error.message,
+      });
+      response.code(404);
+      return response;
+    }
+  }
+
+  putNoteByIdHandler(request, h) {
+    try {
+      // mengambil id dari request params
+      const { id } = request.params;
+
+      // proses edit data
+      this._service.editNoteById(id, request.payload);
+
+      // kembalikan response success
+      return {
+        status: "success",
+        message: "Catatan berhasil diperbarui",
+      };
+    } catch (error) {
+      // response error
+      const response = h.response({
+        status: "fail",
+        message: error.message,
+      });
+      response.status(404);
+      return response;
+    }
+  }
+
+  deleteNoteByIdHandler(request, h) {
+    try {
+      // menbamdil id dari reqest params
+      const { id } = request.params;
+
+      // proses hapus data
+      this._service.deleteNoteById(id);
+
+      // mengambalikan response sukses
+      return {
+        status: "success",
+        message: "Catatan berhasil dihapus",
+      };
+    } catch (error) {
+      // response error
+      const response = h.response({
+        status: "fail",
+        message: error.message,
+      });
+      response.status(404);
+      return response;
+    }
+  }
 }
