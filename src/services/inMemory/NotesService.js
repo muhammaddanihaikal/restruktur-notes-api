@@ -95,4 +95,4 @@ class NotesServices {
   }
 }
 
-// TEST
+module.exports = NotesServices;
