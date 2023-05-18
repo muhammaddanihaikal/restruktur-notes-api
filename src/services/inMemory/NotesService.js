@@ -26,9 +26,11 @@ class NotesServices {
     this._notes.push(newNote);
 
     // cek apakah datanya masuk
+    // mengembalikan true/false
     const isSuccess = this._notes.filter((note) => note.id === id).length > 0;
 
     // lempar error jika gagal
+    // bernilai false
     if (!isSuccess) {
       throw new Error("Catatn gagal ditambahkan");
     }
@@ -49,6 +51,7 @@ class NotesServices {
     const note = this._notes.filter((n) => n.id === id)[0];
 
     // jika datanya ga ada
+    // !note bernilai undefined
     if (!note) {
       throw new Error("Catatan tidak ditemukan");
     }
@@ -60,6 +63,7 @@ class NotesServices {
   // method editNoteById
   editNoteById(id, { title, body, tags }) {
     // mengambil index array sesuai dengan id
+    // mengembalikan index/-1
     const index = this._notes.findIndex((note) => note.id === id);
 
     // jika index tidak ada
@@ -83,6 +87,7 @@ class NotesServices {
   // method deleteNoteById
   deleteNoteById(id) {
     // mencari index di array berdasarkan id
+    // mengembalikan index/-1
     const index = this._notes.findIndex((note) => note.id === id);
 
     // jika index tidak ada
