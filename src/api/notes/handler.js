@@ -9,8 +9,11 @@ class NotesHandler {
       // inisialisasi
       const { title = "untitled", body, tags } = request.payload;
 
-      // ambil id dari service post
+      // ambil id dari service addNote()
       const noteId = this._service.addNote({ title, body, tags });
+
+      // note :
+      // tidak perlu ada validasi, soalnya masalah itu sudah di handle sama service
 
       // response success
       const response = h.response({
@@ -95,7 +98,7 @@ class NotesHandler {
 
   deleteNoteByIdHandler(request, h) {
     try {
-      // menbamdil id dari reqest params
+      // mengambil id dari reqest params
       const { id } = request.params;
 
       // proses hapus data
