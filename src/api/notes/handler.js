@@ -1,6 +1,6 @@
 class NotesHandler {
   constructor(service) {
-    this._service = sevice;
+    this._service = service;
   }
 
   // method postNoteHandler
